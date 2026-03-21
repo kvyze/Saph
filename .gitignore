@@ -1,0 +1,8 @@
+.vs/
+SaphCompiler/
+x64/
+
+SaphCompiler.sln
+SaphCompiler.vcxproj
+SaphCompiler.vcxproj.filters
+SaphCompiler.vcxproj.user
