@@ -121,6 +121,12 @@ ASTNode* parse_factor(Parser* parser)
 		node = parse_expression(parser);
 		parser_consume(parser, TOKEN_CRB, "')' expected.");
 	}
+	else if (parser_match(parser, TOKEN_MINUS))
+	{
+		int line = parser->current_token.line;
+		parser_advance(parser);
+		node = ast_unary_op(parse_factor(parser), line);
+	}
 	else
 	{
 		fprintf(stderr, "SyntaxError(%d, %d): found unexpected %s",

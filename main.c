@@ -5,7 +5,7 @@
 
 int main(void)
 {
-	const char* input = "(3 + 5) * 8;";
+	const char* input = "-(3 + 5) * 2;";
 
 	printf("Input: %s\n", input);
 
