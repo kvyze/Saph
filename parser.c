@@ -52,9 +52,9 @@ void parser_consume(Parser* parser, TokenType expected, const char* error_messag
 	}
 }
 
-int parse_program(Parser* parser)
+ASTNode* parse_program(Parser* parser)
 {
-	int result = 0;
+	ASTNode* result = NULL;
 
 	while (!parser_match(parser, TOKEN_EOF) && !parser->error)
 		result = parse_statement(parser);
@@ -62,75 +62,63 @@ int parse_program(Parser* parser)
 	return result;
 }
 
-int parse_statement(Parser* parser)
+ASTNode* parse_statement(Parser* parser)
 {
-	int result = parse_expression(parser);
+	ASTNode* result = parse_expression(parser);
 	parser_consume(parser, TOKEN_SEMICOLON, "';' expected.");
 
 	return result;
 }
 
-int parse_expression(Parser* parser)
+ASTNode* parse_expression(Parser* parser)
 {
-	int left = parse_term(parser);
+	ASTNode* left = parse_term(parser);
 
 	while (parser_match(parser, TOKEN_PLUS) || parser_match(parser, TOKEN_MINUS))
 	{
 		TokenType op = parser->current_token.type;
+		int line = parser->current_token.line;
+
 		parser_advance(parser);
 
-		int right = parse_term(parser);
-
-		if (op == TOKEN_PLUS)
-			left += right;
-		else
-			left -= right;
+		ASTNode* right = parse_term(parser);
+		left = ast_binary_op(left, right, op, line);
 	}
 
 	return left;
 }
 
-int parse_term(Parser* parser)
+ASTNode* parse_term(Parser* parser)
 {
-	int left = parse_factor(parser);
+	ASTNode* left = parse_factor(parser);
 
 	while (parser_match(parser, TOKEN_MUL) || parser_match(parser, TOKEN_DIV))
 	{
 		TokenType op = parser->current_token.type;
+		int line = parser->current_token.line;
+
 		parser_advance(parser);
 
-		int right = parse_factor(parser);
-
-		if (op == TOKEN_MUL)
-			left *= right;
-		else
-		{
-			if (right == 0)
-			{
-				fprintf(stderr, "ZeroDivisionError(%d, %d): division by 0.", parser->current_token.line, parser->current_token.column);
-				parser->error = 1;
-				exit(EXIT_FAILURE);
-			}
-			left /= right;
-		}
+		ASTNode* right = parse_factor(parser);
+		left = ast_binary_op(left, right, op, line);
 	}
 
 	return left;
 }
 
-int parse_factor(Parser* parser)
+ASTNode* parse_factor(Parser* parser)
 {
-	int result = 0;
+	ASTNode* node = NULL;
 
 	if (parser_match(parser, TOKEN_NUMBER))
 	{
-		result = parser->current_token.value;
+		node = ast_number(parser->current_token.value, parser->current_token.line);
 		parser_advance(parser);
 	}
 	else if (parser_match(parser, TOKEN_ORB))
 	{
 		parser_advance(parser);
-		result = parse_expression(parser);
+		node = parse_expression(parser);
 		parser_consume(parser, TOKEN_CRB, "')' expected.");
 	}
 	else
@@ -141,5 +129,5 @@ int parse_factor(Parser* parser)
 		exit(EXIT_FAILURE);
 	}
 
-	return result;
+	return node;
 }
