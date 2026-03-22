@@ -3,17 +3,13 @@
 #include <ctype.h>
 
 #include "lexer.h"
+#include "merror.h"
 
 
 Lexer* lexer_create(const char* input)
 {
 	Lexer* lexer = malloc(sizeof(Lexer));
-
-	if (!lexer)
-	{
-		fprintf(stderr, "Lexer memory allocation error.\n");
-		exit(EXIT_FAILURE);
-	}
+	merror(lexer, "Lexer")
 
 	lexer->input = input;
 	lexer->pos = 0;

@@ -2,17 +2,13 @@
 #include <stdlib.h>
 
 #include "ast.h"
+#include "merror.h"
 
 
 ASTNode* ast_alloc()
 {
 	ASTNode* node = malloc(sizeof(ASTNode));
-
-	if (!node)
-	{
-		fprintf(stderr, "AST memory allocation error.");
-		exit(EXIT_FAILURE);
-	}
+	merror(node, "AST")
 
 	return node;
 }

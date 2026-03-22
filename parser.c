@@ -2,17 +2,13 @@
 #include <stdlib.h>
 
 #include "parser.h"
+#include "merror.h"
 
 
 Parser* parser_create(Lexer* lexer)
 {
 	Parser* parser = malloc(sizeof(Parser));
-
-	if (!parser)
-	{
-		fprintf(stderr, "Parser memory allocation error.");
-		exit(EXIT_FAILURE);
-	}
+	merror(parser, "Parser")
 
 	parser->lexer = lexer;
 	parser->current_token = lexer_next_token(lexer);
