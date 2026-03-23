@@ -5,11 +5,18 @@
 #include "vm.h"
 
 
-int main(void)
-{
-	const char* input = "(10 + 5) * (8 - 3)";
+void compile(const char* input);
 
-	printf("Input: %s\n", input);
+int main(int argc, char* argv[])
+{
+	compile("1 + 1 * 3");
+
+	return 0;
+}
+
+void compile(const char* input)
+{
+	printf("Source: %s\n", input);
 
 	Lexer* lexer = lexer_create(input);
 	Parser* parser = parser_create(lexer);
@@ -18,7 +25,7 @@ int main(void)
 	ASTNode* ast = parse_program(parser);
 	printf("\n=== AST ===\n");
 	ast_print(ast, 0);
-	
+
 	bytecode_generate(bc, ast);
 	bytecode_add(bc, OP_HALT);
 	printf("\n=== BYTECODE ===\n");
@@ -28,10 +35,9 @@ int main(void)
 	int result = vm_run(vm);
 	printf("\nResult: %d\n", result);
 
+	vm_destroy(vm);
 	bytecode_destroy(bc);
 	ast_free(ast);
 	parser_destroy(parser);
 	lexer_destroy(lexer);
-
-	return 0;
 }

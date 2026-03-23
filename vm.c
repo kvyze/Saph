@@ -6,7 +6,7 @@
 
 #define READ_OPCODE vm->program->code[vm->ip++]
 #define READ_STACK vm->stack[--vm->sp]
-#define PUSH_STACK vm->stack[vm->sp++]
+#define PUSH_STACK(v) vm->stack[vm->sp++] = v
 
 
 VM* vm_create(Bytecode* program)
@@ -38,7 +38,7 @@ int vm_run(VM* vm)
 			case OP_PUSH:
 			{
 				int value = READ_OPCODE;
-				PUSH_STACK = value;
+				PUSH_STACK(value);
 				break;
 			}
 
@@ -46,7 +46,7 @@ int vm_run(VM* vm)
 			{
 				int right = READ_STACK;
 				int left = READ_STACK;
-				PUSH_STACK = left + right;
+				PUSH_STACK(left + right);
 				break;
 			}
 
@@ -54,7 +54,7 @@ int vm_run(VM* vm)
 			{
 				int right = READ_STACK;
 				int left = READ_STACK;
-				PUSH_STACK = left - right;
+				PUSH_STACK(left - right);
 				break;
 			}
 
@@ -62,7 +62,7 @@ int vm_run(VM* vm)
 			{
 				int right = READ_STACK;
 				int left = READ_STACK;
-				PUSH_STACK = left * right;
+				PUSH_STACK(left * right);
 				break;
 			}
 
@@ -74,14 +74,14 @@ int vm_run(VM* vm)
 					error("ZeroDivisionError: division by 0.")
 
 				int left = READ_STACK;
-				PUSH_STACK = left - right;
+				PUSH_STACK(left / right);
 				break;
 			}
 
 			case OP_NEG:
 			{
 				int value = READ_STACK;
-				PUSH_STACK = -value;
+				PUSH_STACK(-value);
 				break;
 			}
 
