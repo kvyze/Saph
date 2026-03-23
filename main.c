@@ -2,11 +2,12 @@
 
 #include "parser.h"
 #include "bytecode.h"
+#include "vm.h"
 
 
 int main(void)
 {
-	const char* input = "17 + (134 - 80) * 3;";
+	const char* input = "(10 + 5) * (8 - 3)";
 
 	printf("Input: %s\n", input);
 
@@ -15,12 +16,17 @@ int main(void)
 	Bytecode* bc = bytecode_create();
 
 	ASTNode* ast = parse_program(parser);
-	printf("Result: %d\n\n=== AST ===\n", ast_eval(ast));
+	printf("\n=== AST ===\n");
 	ast_print(ast, 0);
 	
 	bytecode_generate(bc, ast);
+	bytecode_add(bc, OP_HALT);
 	printf("\n=== BYTECODE ===\n");
 	bytecode_print(bc);
+
+	VM* vm = vm_create(bc);
+	int result = vm_run(vm);
+	printf("\nResult: %d\n", result);
 
 	bytecode_destroy(bc);
 	ast_free(ast);

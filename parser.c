@@ -50,20 +50,20 @@ void parser_consume(Parser* parser, TokenType expected, const char* error_messag
 
 ASTNode* parse_program(Parser* parser)
 {
-	ASTNode* result = NULL;
+	ASTNode* node = NULL;
 
 	while (!parser_match(parser, TOKEN_EOF) && !parser->error)
-		result = parse_statement(parser);
+		node = parse_statement(parser);
 
-	return result;
+	return node;
 }
 
 ASTNode* parse_statement(Parser* parser)
 {
-	ASTNode* result = parse_expression(parser);
-	parser_consume(parser, TOKEN_SEMICOLON, "';' expected.");
+	ASTNode* node = parse_expression(parser);
+	//parser_consume(parser, TOKEN_SEMICOLON, "';' expected.");
 
-	return result;
+	return node;
 }
 
 ASTNode* parse_expression(Parser* parser)
