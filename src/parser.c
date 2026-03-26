@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "parser.h"
-#include "merror.h"
+#include "../include/parser.h"
+#include "../include/merror.h"
 
 
 Parser* parser_create(Lexer* lexer)
@@ -31,12 +31,12 @@ void parser_advance(Parser* parser)
 		parser->error = 1;
 }
 
-int parser_match(Parser* parser, TokenType type)
+int parser_match(Parser* parser, Saph_TokenType type)
 {
 	return parser->current_token.type == type;
 }
 
-void parser_consume(Parser* parser, TokenType expected, const char* error_message)
+void parser_consume(Parser* parser, Saph_TokenType expected, const char* error_message)
 {
 	if (parser->current_token.type == expected)
 		parser_advance(parser);
@@ -72,7 +72,7 @@ ASTNode* parse_expression(Parser* parser)
 
 	while (parser_match(parser, TOKEN_PLUS) || parser_match(parser, TOKEN_MINUS))
 	{
-		TokenType op = parser->current_token.type;
+		Saph_TokenType op = parser->current_token.type;
 		int line = parser->current_token.line;
 
 		parser_advance(parser);
@@ -90,7 +90,7 @@ ASTNode* parse_term(Parser* parser)
 
 	while (parser_match(parser, TOKEN_MUL) || parser_match(parser, TOKEN_DIV))
 	{
-		TokenType op = parser->current_token.type;
+		Saph_TokenType op = parser->current_token.type;
 		int line = parser->current_token.line;
 
 		parser_advance(parser);

@@ -1,6 +1,6 @@
-#include "token.h"
+#include "../include/token.h"
 
-const char* token_type_to_string(TokenType type)
+const char* token_type_to_string(Saph_TokenType type)
 {
 	switch (type)
 	{

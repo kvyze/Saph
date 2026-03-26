@@ -1,15 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "vm.h"
-#include "merror.h"
+#include "../include/vm.h"
+#include "../include/merror.h"
 
-#define READ_OPCODE vm->program->code[vm->ip++]
+#define READ_OPCODE vm->program[vm->ip++]
 #define READ_STACK vm->stack[--vm->sp]
 #define PUSH_STACK(v) vm->stack[vm->sp++] = v
 
 
-VM* vm_create(Bytecode* program)
+VM* vm_create(int* program)
 {
 	VM* vm = malloc(sizeof(VM));
 	merror(vm, "Virtual machine")

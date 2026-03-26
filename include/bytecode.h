@@ -1,17 +1,7 @@
 #pragma once
 
 #include "ast.h"
-
-typedef enum
-{
-	OP_PUSH,
-	OP_ADD,
-	OP_SUB,
-	OP_MUL,
-	OP_DIV,
-	OP_NEG,
-	OP_HALT
-} Opcode;
+#include "opcode.h"
 
 typedef struct
 {

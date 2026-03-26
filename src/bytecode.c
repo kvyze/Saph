@@ -1,10 +1,8 @@
-#pragma warning(disable: 6308)
-
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "bytecode.h"
-#include "merror.h"
+#include "../include/bytecode.h"
+#include "../include/merror.h"
 
 
 Bytecode* bytecode_create(void)
@@ -17,6 +15,8 @@ Bytecode* bytecode_create(void)
 	bc->code = malloc(bc->capacity * sizeof(int));
 
 	merror(bc->code, "Bytecode instructions")
+
+	return bc;
 }
 
 void bytecode_destroy(Bytecode* bc)
@@ -33,8 +33,9 @@ void bytecode_add(Bytecode* bc, int op)
 	if (bc->size >= bc->capacity)
 	{
 		bc->capacity *= 2;
-		bc->code = realloc(bc->code, bc->capacity * sizeof(int));
-		merror(bc->code, "Bytecode instructions (realloc)")
+		int* code = realloc(bc->code, bc->capacity * sizeof(int));
+		merror(code, "Bytecode instructions (realloc)")
+		bc->code = code;
 	}
 
 	bc->code[bc->size++] = op;

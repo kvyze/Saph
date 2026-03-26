@@ -12,14 +12,14 @@ typedef enum
 	TOKEN_SEMICOLON,
 	TOKEN_EOF,
 	TOKEN_ERROR
-} TokenType;
+} Saph_TokenType;
 
 typedef struct
 {
-	TokenType type;
+	Saph_TokenType type;
 	int value;
 	int line;
 	int column;
 } Token;
 
-const char* token_type_to_string(TokenType type);
+const char* token_type_to_string(Saph_TokenType type);

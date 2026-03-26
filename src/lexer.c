@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#include "lexer.h"
-#include "merror.h"
+#include "../include/lexer.h"
+#include "../include/merror.h"
 
 
 Lexer* lexer_create(const char* input)

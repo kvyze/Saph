@@ -20,7 +20,7 @@ typedef struct ASTNode
 		struct {
 			struct ASTNode* left;
 			struct ASTNode* right;
-			TokenType op;
+			Saph_TokenType op;
 		} binary_op;
 
 		struct {
@@ -31,7 +31,7 @@ typedef struct ASTNode
 
 ASTNode* ast_alloc();
 ASTNode* ast_number(int value, int line);
-ASTNode* ast_binary_op(ASTNode* left, ASTNode* right, TokenType op, int line);
+ASTNode* ast_binary_op(ASTNode* left, ASTNode* right, Saph_TokenType op, int line);
 ASTNode* ast_unary_op(ASTNode* operand, int line);
 
 int ast_eval(ASTNode* node);

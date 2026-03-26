@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ast.h"
-#include "merror.h"
+#include "../include/ast.h"
+#include "../include/merror.h"
 
 
 ASTNode* ast_alloc()
@@ -24,7 +24,7 @@ ASTNode* ast_number(int value, int line)
 	return node;
 }
 
-ASTNode* ast_binary_op(ASTNode* left, ASTNode* right, TokenType op, int line)
+ASTNode* ast_binary_op(ASTNode* left, ASTNode* right, Saph_TokenType op, int line)
 {
 	ASTNode* node = ast_alloc();
 
