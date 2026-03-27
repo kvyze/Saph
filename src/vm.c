@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "../include/vm.h"
 #include "../include/merror.h"
@@ -9,7 +10,7 @@
 #define PUSH_STACK(v) vm->stack[vm->sp++] = v
 
 
-VM* vm_create(int* program)
+VM* vm_create(uint8_t* program, double* constants)
 {
 	VM* vm = malloc(sizeof(VM));
 	merror(vm, "Virtual machine")
@@ -17,6 +18,7 @@ VM* vm_create(int* program)
 	vm->sp = 0;
 	vm->ip = 0;
 	vm->program = program;
+	vm->constants = constants;
 
 	return vm;
 }
@@ -27,60 +29,60 @@ void vm_destroy(VM* vm)
 		free(vm);
 }
 
-int vm_run(VM* vm)
+double vm_run(VM* vm)
 {
 	while (1)
 	{
-		int opcode = READ_OPCODE;
+		uint8_t opcode = READ_OPCODE;
 
 		switch (opcode)
 		{
 			case OP_PUSH:
 			{
-				int value = READ_OPCODE;
-				PUSH_STACK(value);
+				uint8_t index = READ_OPCODE;
+				PUSH_STACK(vm->constants[index]);
 				break;
 			}
 
 			case OP_ADD:
 			{
-				int right = READ_STACK;
-				int left = READ_STACK;
+				double right = READ_STACK;
+				double left = READ_STACK;
 				PUSH_STACK(left + right);
 				break;
 			}
 
 			case OP_SUB:
 			{
-				int right = READ_STACK;
-				int left = READ_STACK;
+				double right = READ_STACK;
+				double left = READ_STACK;
 				PUSH_STACK(left - right);
 				break;
 			}
 
 			case OP_MUL:
 			{
-				int right = READ_STACK;
-				int left = READ_STACK;
+				double right = READ_STACK;
+				double left = READ_STACK;
 				PUSH_STACK(left * right);
 				break;
 			}
 
 			case OP_DIV:
 			{
-				int right = READ_STACK;
+				double right = READ_STACK;
 
 				if (right == 0)
 					error("ZeroDivisionError: division by 0.")
 
-				int left = READ_STACK;
+				double left = READ_STACK;
 				PUSH_STACK(left / right);
 				break;
 			}
 
 			case OP_NEG:
 			{
-				int value = READ_STACK;
+				double value = READ_STACK;
 				PUSH_STACK(-value);
 				break;
 			}

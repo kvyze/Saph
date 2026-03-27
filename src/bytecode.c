@@ -12,9 +12,15 @@ Bytecode* bytecode_create(void)
 
 	bc->capacity = 16;
 	bc->size = 0;
-	bc->code = malloc(bc->capacity * sizeof(int));
+	bc->code = malloc(bc->capacity * sizeof(uint8_t));
 
 	merror(bc->code, "Bytecode instructions")
+
+	bc->const_capacity = 16;
+	bc->const_size = 0;
+	bc->constants = malloc(bc->const_capacity * sizeof(double));
+
+	merror(bc->constants, "Bytecode constants")
 
 	return bc;
 }
@@ -24,11 +30,12 @@ void bytecode_destroy(Bytecode* bc)
 	if (bc)
 	{
 		if (bc->code) free(bc->code);
+		if (bc->constants) free(bc->constants);
 		free(bc);
 	}
 }
 
-void bytecode_add(Bytecode* bc, int op)
+void bytecode_add(Bytecode* bc, uint8_t op)
 {
 	if (bc->size >= bc->capacity)
 	{
@@ -41,14 +48,31 @@ void bytecode_add(Bytecode* bc, int op)
 	bc->code[bc->size++] = op;
 }
 
+int bytecode_add_constant(Bytecode* bc, double value)
+{
+	if (bc->const_size >= bc->const_capacity)
+	{
+		bc->const_capacity *= 2;
+		double* constants = realloc(bc->constants, bc->const_capacity * sizeof(double));
+		merror(constants, "Bytecode constants (realloc)")
+		bc->constants = constants;
+	}
+
+	bc->constants[bc->const_size] = value;
+	return bc->const_size++;
+}
+
 void bytecode_generate(Bytecode* bc, ASTNode* node)
 {
 	switch (node->type)
 	{
 		case AST_NUMBER:
+		{
+			int index = bytecode_add_constant(bc, node->data.number_value);
 			bytecode_add(bc, OP_PUSH);
-			bytecode_add(bc, node->data.number_value);
+			bytecode_add(bc, index);
 			break;
+		}
 
 		case AST_BINARY_OP:
 			bytecode_generate(bc, node->data.binary_op.left);

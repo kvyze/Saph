@@ -13,7 +13,13 @@ char* remove_last_ext(const char* filename);
 int main(int argc, char* argv[])
 {
 	if (argc < 2)
-		return 1;
+	{
+		SaphCore* core = saph_init("1");
+		saph_run(core, 1);
+		saph_free(core);
+
+		return;
+	}
 
 	const char* arg1 = argv[1];
 	
@@ -40,11 +46,10 @@ int main(int argc, char* argv[])
 
 		fgets(source, sizeof(source), fp);
 		SaphCore* core = saph_init(source);
+		int build = 0, debug = 0;
 
 		if (argc > 2)
 		{
-			int build = 0, debug = 0;
-
 			for (int i = 2; i < argc; i++)
 			{
 				if (argcmp(argv[i], "-b", "--build"))
@@ -53,14 +58,12 @@ int main(int argc, char* argv[])
 				if (argcmp(argv[i], "-d", "--debug"))
 					debug = 1;
 			}
-
-			if (build)
-				saph_build(core, filename, debug);
-
-			return 0;
 		}
-		
-		saph_run(core);
+
+		if (build)
+			saph_build(core, filename, debug);
+		else
+			saph_run(core, debug);
 
 		saph_free(core);
 		fclose(fp);

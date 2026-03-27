@@ -1,15 +1,18 @@
 #pragma once
 
+#include <stdint.h>
+
 #include "opcode.h"
 
 typedef struct
 {
-	int stack[256];
+	double stack[256];
 	int sp;
 	int ip;
-	int* program;
+	uint8_t* program;
+	double* constants;
 } VM;
 
-VM* vm_create(int* program);
+VM* vm_create(uint8_t* program, double* constants);
 void vm_destroy(VM* vm);
-int vm_run(VM* vm);
+double vm_run(VM* vm);

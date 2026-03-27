@@ -17,7 +17,7 @@ typedef enum
 typedef struct
 {
 	Saph_TokenType type;
-	int value;
+	double value;
 	int line;
 	int column;
 } Token;

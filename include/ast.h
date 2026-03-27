@@ -15,7 +15,7 @@ typedef struct ASTNode
 	int line;
 
 	union {
-		int number_value;
+		double number_value;
 
 		struct {
 			struct ASTNode* left;
@@ -30,7 +30,7 @@ typedef struct ASTNode
 } ASTNode;
 
 ASTNode* ast_alloc();
-ASTNode* ast_number(int value, int line);
+ASTNode* ast_number(double value, int line);
 ASTNode* ast_binary_op(ASTNode* left, ASTNode* right, Saph_TokenType op, int line);
 ASTNode* ast_unary_op(ASTNode* operand, int line);
 

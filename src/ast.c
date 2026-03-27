@@ -13,7 +13,7 @@ ASTNode* ast_alloc()
 	return node;
 }
 
-ASTNode* ast_number(int value, int line)
+ASTNode* ast_number(double value, int line)
 {
 	ASTNode* node = ast_alloc();
 
@@ -117,9 +117,9 @@ void ast_print(ASTNode* node, int indent)
 	switch (node->type)
 	{
 		case AST_NUMBER:
-			printf("NUMBER(%d) [line:%d]\n", node->data.number_value, node->line);
+			printf("NUMBER(%lf) [line:%d]\n", node->data.number_value, node->line);
 			break;
-
+			
 		case AST_BINARY_OP:
 		{
 			const char* op = "";

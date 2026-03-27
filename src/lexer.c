@@ -67,6 +67,19 @@ Token lexer_read_number(Lexer* lexer)
 		lexer_advance(lexer);
 	}
 
+	if (lexer->current_char == '.')
+	{
+		lexer_advance(lexer);
+		double fraction = 1;
+
+		while (lexer->current_char != '\0' && isdigit(lexer->current_char))
+		{
+			fraction /= 10;
+			token.value = token.value + (lexer->current_char - '0') * fraction;
+			lexer_advance(lexer);
+		}
+	}
+
 	return token;
 }
 
