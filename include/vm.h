@@ -15,4 +15,4 @@ typedef struct
 
 VM* vm_create(uint8_t* program, double* constants);
 void vm_destroy(VM* vm);
-double vm_run(VM* vm);
+void vm_run(VM* vm);

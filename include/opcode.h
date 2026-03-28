@@ -8,5 +8,6 @@ typedef enum
 	OP_MUL,
 	OP_DIV,
 	OP_NEG,
-	OP_HALT
+	OP_HALT,
+	OP_PRINT
 } Opcode;

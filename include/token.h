@@ -1,8 +1,11 @@
 #pragma once
 
+#define MAX_WORD 64
+
 typedef enum
 {
 	TOKEN_NUMBER,
+	TOKEN_WORD,
 	TOKEN_PLUS,
 	TOKEN_MINUS,
 	TOKEN_MUL,
@@ -18,6 +21,7 @@ typedef struct
 {
 	Saph_TokenType type;
 	double value;
+	char word[MAX_WORD];
 	int line;
 	int column;
 } Token;

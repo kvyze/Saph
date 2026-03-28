@@ -93,6 +93,11 @@ void bytecode_generate(Bytecode* bc, ASTNode* node)
 			bytecode_add(bc, OP_NEG);
 			break;
 
+		case AST_PRINT:
+			bytecode_generate(bc, node->data.print_stmt.expr);
+			bytecode_add(bc, OP_PRINT);
+			break;
+
 		default:
 			error("Error: unknown AST node type (bytecode generation).")
 	}
@@ -113,6 +118,7 @@ void bytecode_print(Bytecode* bc)
 			case OP_DIV:	printf("DIV\n"); break;
 			case OP_NEG:	printf("NEG\n"); break;
 			case OP_HALT:	printf("HALT\n"); break;
+			case OP_PRINT:	printf("PRINT\n"); break;
 			default:		printf("UNKNOWN(%d)\n", opcode); break;
 		}
 	}

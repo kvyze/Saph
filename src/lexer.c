@@ -60,6 +60,7 @@ Token lexer_read_number(Lexer* lexer)
 	token.line = lexer->line;
 	token.column = lexer->column;
 	token.value = 0;
+	token.word[0] = '\0';
 
 	while (lexer->current_char != '\0' && isdigit(lexer->current_char))
 	{
@@ -79,6 +80,28 @@ Token lexer_read_number(Lexer* lexer)
 			lexer_advance(lexer);
 		}
 	}
+
+	return token;
+}
+
+Token lexer_read_word(Lexer* lexer)
+{
+	Token token;
+
+	token.type = TOKEN_WORD;
+	token.line = lexer->line;
+	token.column = lexer->column;
+	token.value = 0;
+
+	int i = 0;
+
+	while (lexer->current_char != '\0' && isalpha(lexer->current_char))
+	{
+		if (i < MAX_WORD - 1) token.word[i++] = lexer->current_char;
+		lexer_advance(lexer);
+	}
+
+	token.word[i] = '\0';
 
 	return token;
 }
@@ -105,6 +128,8 @@ Token lexer_next_token(Lexer* lexer)
 		default:
 			if (isdigit(lexer->current_char))
 				return lexer_read_number(lexer);
+			else if (isalpha(lexer->current_char))
+				return lexer_read_word(lexer);
 			else
 			{
 				token.type = TOKEN_ERROR;

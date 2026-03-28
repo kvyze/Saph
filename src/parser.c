@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../include/parser.h"
 #include "../include/merror.h"
@@ -36,6 +37,11 @@ int parser_match(Parser* parser, Saph_TokenType type)
 	return parser->current_token.type == type;
 }
 
+int parser_match_word(Parser* parser, const char* value)
+{
+	return parser->current_token.type == TOKEN_WORD && strcmp(parser->current_token.word, value) == 0;
+}
+
 void parser_consume(Parser* parser, Saph_TokenType expected, const char* error_message)
 {
 	if (parser->current_token.type == expected)
@@ -60,8 +66,16 @@ ASTNode* parse_program(Parser* parser)
 
 ASTNode* parse_statement(Parser* parser)
 {
-	ASTNode* node = parse_expression(parser);
-	//parser_consume(parser, TOKEN_SEMICOLON, "';' expected.");
+	ASTNode* node = NULL;
+	int line = parser->current_token.line;
+
+	if (parser_match_word(parser, "print"))
+	{
+		parser_advance(parser);
+		node = ast_print_stmt(parse_expression(parser), line);
+	}
+	else
+		node = parse_expression(parser);
 
 	return node;
 }

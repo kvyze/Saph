@@ -48,46 +48,15 @@ ASTNode* ast_unary_op(ASTNode* operand, int line)
 	return node;
 }
 
-int ast_eval(ASTNode* node)
+ASTNode* ast_print_stmt(ASTNode* expr, int line)
 {
-	switch (node->type)
-	{
-		case AST_NUMBER:
-			return node->data.number_value;
+	ASTNode* node = ast_alloc();
 
-		case AST_BINARY_OP:
-		{
-			int left = ast_eval(node->data.binary_op.left);
-			int right = ast_eval(node->data.binary_op.right);
+	node->type = AST_PRINT;
+	node->line = line;
+	node->data.print_stmt.expr = expr;
 
-			switch (node->data.binary_op.op)
-			{
-				case TOKEN_PLUS:
-					return left + right;
-				case TOKEN_MINUS:
-					return left - right;
-				case TOKEN_MUL:
-					return left * right;
-				case TOKEN_DIV:
-					if (right == 0)
-					{
-						fprintf(stderr, "ZeroDivisionError(%d): division by 0.", node->line);
-						exit(1);
-					}
-					return left / right;
-				default:
-					fprintf(stderr, "Error(%d): unknown operator.", node->line);
-					exit(1);
-			}
-		}
-
-		case AST_UNARY_OP:
-			return -ast_eval(node->data.unary_op.operand);
-
-		default:
-			fprintf(stderr, "Error(%d): unknown AST node type.", node->line);
-			exit(1);
-	}
+	return node;
 }
 
 void ast_free(ASTNode* node)
@@ -103,6 +72,13 @@ void ast_free(ASTNode* node)
 			break;
 		case AST_UNARY_OP:
 			ast_free(node->data.unary_op.operand);
+			break;
+		case AST_PRINT:
+			ast_free(node->data.print_stmt.expr);
+			break;
+		case AST_BLOCK:
+			for (int i = 0; i < node->data.block.count; i++)
+				ast_free(node->data.block.statements[i]);
 			break;
 	}
 
@@ -141,6 +117,11 @@ void ast_print(ASTNode* node, int indent)
 		case AST_UNARY_OP:
 			printf("UNARY_OP(-) [line:%d]\n", node->line);
 			ast_print(node->data.unary_op.operand, indent + 1);
+			break;
+
+		case AST_PRINT:
+			printf("PRINT [line:%d]\n", node->line);
+			ast_print(node->data.print_stmt.expr, indent + 1);
 			break;
 	}
 }

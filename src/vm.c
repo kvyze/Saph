@@ -29,7 +29,7 @@ void vm_destroy(VM* vm)
 		free(vm);
 }
 
-double vm_run(VM* vm)
+void vm_run(VM* vm)
 {
 	while (1)
 	{
@@ -88,11 +88,13 @@ double vm_run(VM* vm)
 			}
 
 			case OP_HALT:
-			{
-				if (vm->sp > 0)
-					return READ_STACK;
+				return;
 
-				return 0;
+			case OP_PRINT:
+			{
+				double value = READ_STACK;
+				printf("%g\n", value);
+				break;
 			}
 
 			default:

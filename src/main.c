@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
 {
 	if (argc < 2)
 	{
-		SaphCore* core = saph_init("1");
+		SaphCore* core = saph_init("print 1 + 1 * 3.367 - 9");
 		saph_run(core, 1);
 		saph_free(core);
 
