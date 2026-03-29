@@ -1,3 +1,5 @@
+#pragma warning(disable: 6386)
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -12,15 +14,6 @@ char* remove_last_ext(const char* filename);
 
 int main(int argc, char* argv[])
 {
-	if (argc < 2)
-	{
-		SaphCore* core = saph_init("print 1 + 1 * 3.367 - 9");
-		saph_run(core, 1);
-		saph_free(core);
-
-		return;
-	}
-
 	const char* arg1 = argv[1];
 	
 	if (argcmp(arg1, "-v", "--version"))
@@ -40,11 +33,17 @@ int main(int argc, char* argv[])
 	else
 	{
 		char* filename = remove_last_ext(arg1);
-		FILE* fp = fopen(arg1, "r");
+		FILE* fp = fopen(arg1, "rb");
 		if (!fp) return 1;
-		char source[100];
 
-		fgets(source, sizeof(source), fp);
+		fseek(fp, 0, SEEK_END);
+		long size = ftell(fp);
+		fseek(fp, 0, SEEK_SET);
+		char* source = malloc(size + 1);
+		merror(source, "Source file")
+		fread(source, size, 1, fp);
+		source[size] = '\0';
+		
 		SaphCore* core = saph_init(source);
 		int build = 0, debug = 0;
 

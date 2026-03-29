@@ -47,7 +47,7 @@ ASTNode* ast_binary_op(ASTNode* left, ASTNode* right, Saph_TokenType op, int lin
 ASTNode* ast_unary_op(ASTNode* operand, int line);
 ASTNode* ast_print_stmt(ASTNode* expr, int line);
 ASTNode* ast_block_create(void);
-ASTNode* ast_block_add(ASTNode* block, ASTNode* stmt);
+void ast_block_add(ASTNode* block, ASTNode* stmt);
 
 void ast_free(ASTNode* node);
 void ast_print(ASTNode* node, int indent);

@@ -19,7 +19,7 @@ void codegen_generate(FILE* fp, SaphCore* core, const char* root_path)
 	CODEGEN_ARRAY(fp, core->bc->code, core->bc->size, "%d")
 
 	fprintf(fp, "static double constants[] = ");
-	CODEGEN_ARRAY(fp, core->bc->constants, core->bc->const_size, "%g")
+	CODEGEN_ARRAY(fp, core->bc->constants, core->bc->const_size, "%f")
 
 	fprintf(fp, "\nint main(void)\n");
 	fprintf(fp, "{\n");

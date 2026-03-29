@@ -56,12 +56,12 @@ void parser_consume(Parser* parser, Saph_TokenType expected, const char* error_m
 
 ASTNode* parse_program(Parser* parser)
 {
-	ASTNode* node = NULL;
+	ASTNode* block = ast_block_create();
 
 	while (!parser_match(parser, TOKEN_EOF) && !parser->error)
-		node = parse_statement(parser);
+		ast_block_add(block, parse_statement(parser));
 
-	return node;
+	return block;
 }
 
 ASTNode* parse_statement(Parser* parser)

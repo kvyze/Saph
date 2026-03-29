@@ -59,6 +59,33 @@ ASTNode* ast_print_stmt(ASTNode* expr, int line)
 	return node;
 }
 
+ASTNode* ast_block_create(void)
+{
+	ASTNode* node = ast_alloc();
+
+	node->type = AST_BLOCK;
+	node->line = 0;
+	node->data.block.count = 0;
+	node->data.block.capacity = 4;
+	node->data.block.statements = malloc(node->data.block.capacity * sizeof(ASTNode*));
+	merror(node->data.block.statements, "Statements")
+
+	return node;
+}
+
+void ast_block_add(ASTNode* block, ASTNode* stmt)
+{
+	if (block->data.block.count >= block->data.block.capacity)
+	{
+		block->data.block.capacity *= 2;
+		ASTNode** statements = realloc(block->data.block.statements, block->data.block.capacity * sizeof(ASTNode*));
+		merror(statements, "Statements (realloc)")
+		block->data.block.statements = statements;
+	}
+
+	block->data.block.statements[block->data.block.count++] = stmt;
+}
+
 void ast_free(ASTNode* node)
 {
 	if (!node) return;
@@ -79,6 +106,7 @@ void ast_free(ASTNode* node)
 		case AST_BLOCK:
 			for (int i = 0; i < node->data.block.count; i++)
 				ast_free(node->data.block.statements[i]);
+			free(node->data.block.statements);
 			break;
 	}
 
@@ -122,6 +150,12 @@ void ast_print(ASTNode* node, int indent)
 		case AST_PRINT:
 			printf("PRINT [line:%d]\n", node->line);
 			ast_print(node->data.print_stmt.expr, indent + 1);
+			break;
+
+		case AST_BLOCK:
+			printf("BLOCK\n");
+			for (int i = 0; i < node->data.block.count; i++)
+				ast_print(node->data.block.statements[i], indent + 1);
 			break;
 	}
 }

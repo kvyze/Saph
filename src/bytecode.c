@@ -40,7 +40,7 @@ void bytecode_add(Bytecode* bc, uint8_t op)
 	if (bc->size >= bc->capacity)
 	{
 		bc->capacity *= 2;
-		int* code = realloc(bc->code, bc->capacity * sizeof(int));
+		uint8_t* code = realloc(bc->code, bc->capacity * sizeof(int));
 		merror(code, "Bytecode instructions (realloc)")
 		bc->code = code;
 	}
@@ -96,6 +96,11 @@ void bytecode_generate(Bytecode* bc, ASTNode* node)
 		case AST_PRINT:
 			bytecode_generate(bc, node->data.print_stmt.expr);
 			bytecode_add(bc, OP_PRINT);
+			break;
+
+		case AST_BLOCK:
+			for (int i = 0; i < node->data.block.count; i++)
+				bytecode_generate(bc, node->data.block.statements[i]);
 			break;
 
 		default:

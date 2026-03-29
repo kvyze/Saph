@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "../include/vm.h"
 #include "../include/merror.h"
@@ -9,6 +10,17 @@
 #define READ_STACK vm->stack[--vm->sp]
 #define PUSH_STACK(v) vm->stack[vm->sp++] = v
 
+
+void print_double(double num)
+{
+	char buffer[64];
+	snprintf(buffer, sizeof(buffer), "%.10f", num);
+	char* end = buffer + strlen(buffer) - 1;
+	while (*end == '0') end--;
+	if (*end == '.') end--;
+	*(end + 1) = '\0';
+	printf("%s\n", buffer);
+}
 
 VM* vm_create(uint8_t* program, double* constants)
 {
@@ -93,7 +105,7 @@ void vm_run(VM* vm)
 			case OP_PRINT:
 			{
 				double value = READ_STACK;
-				printf("%g\n", value);
+				print_double(value);
 				break;
 			}
 
