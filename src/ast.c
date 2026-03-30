@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../include/ast.h"
 #include "../include/merror.h"
@@ -73,6 +74,29 @@ ASTNode* ast_block_create(void)
 	return node;
 }
 
+ASTNode* ast_variable(const char* name, int line)
+{
+	ASTNode* node = ast_alloc();
+
+	node->type = AST_VARIABLE;
+	node->line = line;
+	strcpy(node->data.variable, name);
+
+	return node;
+}
+
+ASTNode* ast_let_stmt(const char* name, ASTNode* value, int line)
+{
+	ASTNode* node = ast_alloc();
+
+	node->type = AST_LET;
+	node->line = line;
+	strcpy(node->data.let_stmt.name, name);
+	node->data.let_stmt.value = value;
+
+	return node;
+}
+
 void ast_block_add(ASTNode* block, ASTNode* stmt)
 {
 	if (block->data.block.count >= block->data.block.capacity)
@@ -93,6 +117,7 @@ void ast_free(ASTNode* node)
 	switch (node->type)
 	{
 		case AST_NUMBER: break;
+		case AST_VARIABLE: break;
 		case AST_BINARY_OP:
 			ast_free(node->data.binary_op.left);
 			ast_free(node->data.binary_op.right);
@@ -107,6 +132,9 @@ void ast_free(ASTNode* node)
 			for (int i = 0; i < node->data.block.count; i++)
 				ast_free(node->data.block.statements[i]);
 			free(node->data.block.statements);
+			break;
+		case AST_LET:
+			ast_free(node->data.let_stmt.value);
 			break;
 	}
 
@@ -156,6 +184,15 @@ void ast_print(ASTNode* node, int indent)
 			printf("BLOCK\n");
 			for (int i = 0; i < node->data.block.count; i++)
 				ast_print(node->data.block.statements[i], indent + 1);
+			break;
+
+		case AST_VARIABLE:
+			printf("VARIABLE(%s) [line:%d]\n", node->data.variable, node->line);
+			break;
+
+		case AST_LET:
+			printf("LET(%s) [line:%d]\n", node->data.let_stmt.name, node->line);
+			ast_print(node->data.let_stmt.value, indent + 1);
 			break;
 	}
 }

@@ -6,7 +6,7 @@
 
 #include <Windows.h>
 
-#define BUILD "Saph 0.2.0 win64"
+#define BUILD "Saph 0.3.0 win64"
 
 
 typedef struct

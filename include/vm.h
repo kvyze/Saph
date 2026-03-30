@@ -1,16 +1,23 @@
 #pragma once
 
 #include <stdint.h>
-
 #include "opcode.h"
+
+#define MAX_STACK 256
 
 typedef struct
 {
-	double stack[256];
+	double stack[MAX_STACK];
 	int sp;
 	int ip;
 	uint8_t* program;
 	double* constants;
+
+	struct {
+		char name[64];
+		double value;
+	} variables[MAX_STACK];
+	int var_count;
 } VM;
 
 VM* vm_create(uint8_t* program, double* constants);

@@ -8,7 +8,9 @@ typedef enum
 	AST_BINARY_OP,
 	AST_UNARY_OP,
 	AST_PRINT,
-	AST_BLOCK
+	AST_BLOCK,
+	AST_VARIABLE,
+	AST_LET
 } ASTNodeType;
 
 typedef struct ASTNode
@@ -18,6 +20,7 @@ typedef struct ASTNode
 
 	union {
 		double number_value;
+		char variable[MAX_WORD];
 
 		struct {
 			struct ASTNode* left;
@@ -38,6 +41,11 @@ typedef struct ASTNode
 			int count;
 			int capacity;
 		} block;
+
+		struct {
+			char name[MAX_WORD];
+			struct ASTNode* value;
+		} let_stmt;
 	} data;
 } ASTNode;
 
@@ -47,7 +55,9 @@ ASTNode* ast_binary_op(ASTNode* left, ASTNode* right, Saph_TokenType op, int lin
 ASTNode* ast_unary_op(ASTNode* operand, int line);
 ASTNode* ast_print_stmt(ASTNode* expr, int line);
 ASTNode* ast_block_create(void);
-void ast_block_add(ASTNode* block, ASTNode* stmt);
+ASTNode* ast_variable(const char* name, int line);
+ASTNode* ast_let_stmt(const char* name, ASTNode* value, int line);
 
+void ast_block_add(ASTNode* block, ASTNode* stmt);
 void ast_free(ASTNode* node);
 void ast_print(ASTNode* node, int indent);

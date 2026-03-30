@@ -14,7 +14,8 @@ typedef enum
 	TOKEN_CRB,
 	TOKEN_SEMICOLON,
 	TOKEN_EOF,
-	TOKEN_ERROR
+	TOKEN_ERROR,
+	TOKEN_ASSIGN
 } Saph_TokenType;
 
 typedef struct

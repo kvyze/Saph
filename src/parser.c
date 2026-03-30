@@ -54,6 +54,35 @@ void parser_consume(Parser* parser, Saph_TokenType expected, const char* error_m
 	}
 }
 
+ASTNode* parse_let_stmt(Parser* parser)
+{
+	parser_advance(parser);
+
+	if (parser->current_token.type != TOKEN_WORD)
+	{
+		fprintf(stderr, "SyntaxError(%d, %d): expected variable name.\n",
+			parser->current_token.line, parser->current_token.column);
+		exit(1);
+	}
+
+	char name[MAX_WORD];
+	strcpy(name, parser->current_token.word);
+	parser_advance(parser);
+
+	if (parser->current_token.type != TOKEN_ASSIGN)
+	{
+		fprintf(stderr, "SyntaxError(%d, %d): expected '='.\n",
+			parser->current_token.line, parser->current_token.column);
+		exit(1);
+	}
+
+	parser_advance(parser);
+	ASTNode* value = parse_expression(parser);
+	ASTNode* node = ast_let_stmt(name, value, parser->current_token.line);
+
+	return node;
+}
+
 ASTNode* parse_program(Parser* parser)
 {
 	ASTNode* block = ast_block_create();
@@ -74,6 +103,8 @@ ASTNode* parse_statement(Parser* parser)
 		parser_advance(parser);
 		node = ast_print_stmt(parse_expression(parser), line);
 	}
+	else if (parser_match_word(parser, "let"))
+		node = parse_let_stmt(parser);
 	else
 		node = parse_expression(parser);
 
@@ -119,10 +150,11 @@ ASTNode* parse_term(Parser* parser)
 ASTNode* parse_factor(Parser* parser)
 {
 	ASTNode* node = NULL;
+	int line = parser->current_token.line;
 
 	if (parser_match(parser, TOKEN_NUMBER))
 	{
-		node = ast_number(parser->current_token.value, parser->current_token.line);
+		node = ast_number(parser->current_token.value, line);
 		parser_advance(parser);
 	}
 	else if (parser_match(parser, TOKEN_ORB))
@@ -133,9 +165,13 @@ ASTNode* parse_factor(Parser* parser)
 	}
 	else if (parser_match(parser, TOKEN_MINUS))
 	{
-		int line = parser->current_token.line;
 		parser_advance(parser);
 		node = ast_unary_op(parse_factor(parser), line);
+	}
+	else if (parser_match(parser, TOKEN_WORD))
+	{
+		node = ast_variable(parser->current_token.word, line);
+		parser_advance(parser);
 	}
 	else
 	{

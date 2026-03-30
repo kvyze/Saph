@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../include/bytecode.h"
 #include "../include/merror.h"
@@ -103,6 +104,27 @@ void bytecode_generate(Bytecode* bc, ASTNode* node)
 				bytecode_generate(bc, node->data.block.statements[i]);
 			break;
 
+		case AST_VARIABLE:
+		{
+			bytecode_add(bc, OP_LOAD);
+			uint8_t name_len = strlen(node->data.variable);
+			bytecode_add(bc, name_len);
+			for (int i = 0; i < name_len; i++)
+				bytecode_add(bc, node->data.variable[i]);
+			break;
+		}
+
+		case AST_LET:
+		{
+			bytecode_generate(bc, node->data.let_stmt.value);
+			bytecode_add(bc, OP_STORE);
+			uint8_t name_len = strlen(node->data.let_stmt.name);
+			bytecode_add(bc, name_len);
+			for (int i = 0; i < name_len; i++)
+				bytecode_add(bc, node->data.let_stmt.name[i]);
+			break;
+		}
+
 		default:
 			error("Error: unknown AST node type (bytecode generation).")
 	}
@@ -112,7 +134,7 @@ void bytecode_print(Bytecode* bc)
 {
 	for (int i = 0; i < bc->size; i++)
 	{
-		int opcode = bc->code[i];
+		uint8_t opcode = bc->code[i];
 
 		switch (opcode)
 		{
@@ -124,6 +146,24 @@ void bytecode_print(Bytecode* bc)
 			case OP_NEG:	printf("NEG\n"); break;
 			case OP_HALT:	printf("HALT\n"); break;
 			case OP_PRINT:	printf("PRINT\n"); break;
+			case OP_LOAD:
+			{
+				uint8_t name_len = bc->code[++i];
+				printf("LOAD %d", name_len);
+				for (int j = 0; j < name_len; j++)
+					printf(" %d", bc->code[++i]);
+				printf("\n");
+				break;
+			}
+			case OP_STORE:
+			{
+				uint8_t name_len = bc->code[++i];
+				printf("STORE %d", name_len);
+				for (int j = 0; j < name_len; j++)
+					printf(" %d", bc->code[++i]);
+				printf("\n");
+				break;
+			}
 			default:		printf("UNKNOWN(%d)\n", opcode); break;
 		}
 	}

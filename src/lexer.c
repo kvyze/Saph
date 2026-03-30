@@ -125,6 +125,7 @@ Token lexer_next_token(Lexer* lexer)
 		case '(':	token.type = TOKEN_ORB; break;
 		case ')':	token.type = TOKEN_CRB; break;
 		case ';':	token.type = TOKEN_SEMICOLON; break;
+		case '=':	token.type = TOKEN_ASSIGN; break;
 		default:
 			if (isdigit(lexer->current_char))
 				return lexer_read_number(lexer);

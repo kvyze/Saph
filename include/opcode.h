@@ -9,5 +9,7 @@ typedef enum
 	OP_DIV,
 	OP_NEG,
 	OP_HALT,
-	OP_PRINT
+	OP_PRINT,
+	OP_LOAD,
+	OP_STORE
 } Opcode;
